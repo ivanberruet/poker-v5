@@ -1,101 +1,141 @@
-import Image from "next/image";
+'use client';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Sidebar from "@/components/sidebar/Sidebar";
+import Game from "@/components/game/Game";
+import Info from "@/components/info/Info";
+import Stats from "@/components/stats/Stats";
+import Music from "@/components/music/Music";
+import Settings from "@/components/setings/Settings";
+import Header from "@/components/header/Header";
+import Loading from "./Loading";
+import { setAvailablePlayers, setDbPlayers } from "@/reducers/playersSlice";
+import { setAvailableChips } from "@/reducers/chipsSlice";
+import { setBlindsStructure } from "@/reducers/structureSlice";
+import { setDistribution } from '@/reducers/chipsSlice';
+import handleChipsTobeUsed from '@/lib/handleChipsTobeUsed';
+import { setHistoryData } from "@/reducers/historySlice";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
+import getFinalResults from "@/lib/getFinalResults";
+import { saveInfo } from "@/lib/saveInfo";
+
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const {toast} = useToast();
+  const dispatch = useDispatch();
+  const { data, loading, error } = useSelector((state) => state?.sheets);
+  const chips = useSelector(state => state.chips)
+  const players = useSelector((state) => state?.players)
+  const game = useSelector((state) => state?.game)
+  const money = useSelector((state) => state?.money)
+  const [ready, setReady] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  const [view, setView] = useState('game');
+  const [centerComponent, setCenterComponent] = useState(null);
+
+  // Format data
+  useEffect(() => {
+    if(Object.keys(data).length > 0) {
+        // Format players data
+        const players = data.players.map((player) => ({
+          id: player[0],
+          name: player[1],
+          nick: player[2]
+        }))
+        dispatch(setDbPlayers(players));
+        dispatch(setAvailablePlayers(players));
+
+        // Format chips data
+        const chips = data.chips.map((chip) => ({   
+          name: chip[0], 
+          white: {quantity: parseInt(chip[1]), value: 5}, 
+          red: {quantity: parseInt(chip[2]), value: 10}, 
+          green: {quantity: parseInt(chip[3]), value: 25}, 
+          blue: {quantity: parseInt(chip[4]), value: 50}, 
+          black: {quantity: parseInt(chip[5]), value: 100},
+          active: true,
+        }))
+        dispatch(setAvailableChips(chips));
+
+        // Format structure data
+        const structure = data.structure.map((row) => ({
+          level: parseInt(row[0]), 
+          smallBlind: parseInt(row[1]),
+          bigBlind: parseInt(row[2]),
+        }))
+        dispatch(setBlindsStructure(structure));
+
+        // Format history
+        const history = data.history.map((row) => ({
+          date: row[0],
+          startTime: row[1],
+          endTime: row[2],
+          position: row[3],
+          player: row[4],
+          reEntry: row[5],
+          eliminatedTime: row[6],
+          inGameTime: row[7],
+          prize: row[8],
+        }))
+        dispatch(setHistoryData(history));
+
+        setReady(true);
+    }
+  }, [data])
+
+  // Update center component
+  useEffect(() => {
+    const components = {
+      game: null,
+      info: <Info setView={setView} />,
+      stats: <Stats setView={setView} />,
+      settings: <Settings setView={setView} />,
+      none: null
+    };
+
+    setCenterComponent(components[view]);
+  }, [view])
+
+  // Update the distribution
+  useEffect(() => {
+    if(data.chips){
+      dispatch(setDistribution(handleChipsTobeUsed(chips.available, players.registered)))
+    }
+  }, [chips.available, players.registered])
+
+  // End of the game
+  useEffect(() => {
+    if(game.endTime){
+      toast({
+        title: "Torneo finalizado",
+        description: `Felicitaciones ${players.active[0]?.nick || "Jugador"}!`,
+        variant: "outline",
+      });
+      // Get results
+      const finalResults = getFinalResults(game, players, money);
+      saveInfo(finalResults)
+        .then(res => res.error
+          ? toast({ title: "Error!", description: "Error guardando resultados", variant: "destructive" })
+          : toast({ title: "Resultados guardados", description: "Se han guardado tus resultados.", variant: "outline" })
+        );
+    }
+  }, [game.endTime])
+
+  if (!ready) return <Loading />
+
+  return (
+    <>
+      <main className="h-screen overflow-hidden bg-background text-white flex flex-col sm:flex-row w-full">
+        <Sidebar view={view} setView={setView} />
+        <div className='flex flex-col flex-grow h-screen overflow-y-scroll scrollbar-hidden py-4 px-6'>
+          <Header />
+          <Game view={view} />
+          {centerComponent}
+          <Music view={view} />
+          <Toaster />
+        </div> 
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    </>
   );
 }
