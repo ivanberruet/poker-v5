@@ -20,12 +20,12 @@ export default function MusicSidebar({view, setView}) {
   useEffect(() => {
       if (spotifyApi.getAccessToken()) {
         spotifyApi.getUserPlaylists().then((data) => {
-          setPlaylists(data.body.items);
+          setPlaylists(data?.body?.items.filter((playlist) => playlist) ?? []);
         })
       }
   }, [session, spotifyApi]);
 
-
+  
   return (
     <div className='text-neutral-400 p-5 text-xs lg:text-sm border-r border-neutral-900 overflow-y-scroll scrollbar-hidden h-screen hidden md:block w-full sm:max-w-[12rem] lg:max-w-[15rem] pb-36'>
       <div className='space-y-4'>
@@ -46,18 +46,18 @@ export default function MusicSidebar({view, setView}) {
 
           <hr className='border-neutral-800' />
           
-          {playlists.map((playlist) => (
+          {playlists.map((playlist, i) => (
             <p
               onClick={()=>{
-                dispatch(setPlaylistId(playlist.id));
+                dispatch(setPlaylistId(playlist?.id));
                 setView('playlist');
-                console.log("You selected playlist >>>>>", playlist.id);
+                console.log("You selected playlist >>>>>", playlist?.id);
                 
               }}
-              key={playlist.id} 
+              key={playlist?.id ?? i} 
               className='cursor-pointer hover:text-white w-full truncate'
             >
-                {playlist.name}
+                {playlist?.name}
             </p>
           ))}
 

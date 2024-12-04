@@ -39,9 +39,9 @@ export default function Search({setView}) {
       
       <div>
           {searchData === null 
-          ? <FeaturedPlaylists
-              setView={setView}
-          /> : <SearchResults
+          // ? <FeaturedPlaylists
+          ? null
+          : <SearchResults
               playlists={searchData?.body.playlists.items}
               songs={searchData?.body.tracks.items}
               artists={searchData?.body.artists.items}

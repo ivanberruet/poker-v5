@@ -17,7 +17,7 @@ export default function Library ({setView }) {
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
       spotifyApi.getUserPlaylists().then((data) => {
-        setPlaylists(data.body.items);
+        setPlaylists(data?.body?.items.filter((playlist) => playlist) ?? []);
       })
     }
   }, [session, spotifyApi]);
@@ -30,12 +30,12 @@ export default function Library ({setView }) {
         <div className='flex flex-col gap-4 px-8'>
           <h2 className='text-xl font-bold'>Playlists</h2>
           <div className='flex flex-wrap gap-6 mb-48'>
-              {playlists?.map((playlist) => {
+              {playlists?.map((playlist,i) => {
                   return <div 
-                    key={playlist.id} 
+                    key={i} 
                     className='cursor-pointer relative group w-56 mb-2 bg-neutral-800 hover:bg-neutral-600 rounded-md p-4'
                     onClick={() => {
-                      dispatch(setPlaylistId(playlist.id));
+                      dispatch(setPlaylistId(playlist?.id));
                       setView('playlist');
                     }} 
                     >

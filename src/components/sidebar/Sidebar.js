@@ -15,13 +15,23 @@ export default function Sidebar({ view, setView }) {
   const spotifyApi = useSpotify();
   const handleToken = () => {
     const f = async () => {
-      const refreshToken = spotifyApi.getRefreshToken();
-      if (!refreshToken) {
-        const { body: refreshedToken } = await spotifyApi.refreshAccessToken();
-        spotifyApi.setAccessToken(refreshedToken.access_token);
-        spotifyApi.setRefreshToken(refreshedToken.refresh_token);
+      // spotifyApi.getRefreshToken()
+      // console.log("...",spotifyApi.getRefreshToken());
+      
+      // spotifyApi.resetAccessToken()
+
+      spotifyApi.resetAccessToken()
+      spotifyApi.setAccessToken(spotifyApi.getRefreshToken());
+      
+      
+      //const refreshToken = spotifyApi.getRefreshToken();
+      
+      // if (!refreshToken) {
+      //   const { body: refreshedToken } = await spotifyApi.refreshAccessToken();
+      //   spotifyApi.setAccessToken(refreshedToken.access_token);
+      //   spotifyApi.setRefreshToken(refreshedToken.refresh_token);
         
-      }
+      // }
     }
     f();
   }

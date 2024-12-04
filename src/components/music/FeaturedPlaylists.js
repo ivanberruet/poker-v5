@@ -18,10 +18,16 @@ export default function FeaturedPlaylists({setView}) {
 
   useEffect(() => {
     const f = async () => {
-      const data = await spotifyApi.getFeaturedPlaylists({country:'AR'}).catch((err)=> toast({ title: "Something went wrong!", description: err.message, variant: "destructive"}))
-      setFeaturedPlaylists(data.body.playlists.items);
+      const data = await fetch('https://api.spotify.com/v1/browse/featured-playlists', {
+        headers: {
+          Authorization: `Bearer ${spotifyApi.getAccessToken()}`,
+          'Content-Type': 'application/json',
+        },
+      }).then((res) => res.json()).catch((err)=> toast({ title: "Something went wrong!", description: err.message, variant: "destructive"}))
+      // const data = await spotifyApi.getFeaturedPlaylists().catch((err)=> toast({ title: "Something went wrong!", description: err.message, variant: "destructive"}))
+      setFeaturedPlaylists(data?.body?.playlists?.items ?? []);
     }
-    session && f()
+    session && spotifyApi && f()
   }, [spotifyApi, session]);
 
   return (
