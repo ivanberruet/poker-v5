@@ -42,8 +42,8 @@ export default function SearchResults({setView, playlists, songs, artists}) {
                     <FontAwesomeIcon icon={faPlay} className='h-6 w-6 text-black' />
                 </div>
                 {playlists && <>
-                    <img className='h-28 w-28 rounded' src={playlists[0]?.images[0]?.url} />
-                    <p className='text-3xl font-bold'>{playlists[0]?.name}</p>
+                    <img className='h-24 w-24 lg:h-28 lg:w-28 rounded' src={playlists[0]?.images[0]?.url} />
+                    <p className='xl:text-2xl 2xl:text-3xl font-bold'>{playlists[0]?.name}</p>
                     <p className='text-sm text-neutral-400'>By {playlists[0]?.owner.display_name} <span className='rounded-full bg-neutral-900 text-white font-bold ml-4 py-1 px-4'>Playlist</span></p>
                 </>}
               </div>

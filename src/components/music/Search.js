@@ -38,15 +38,11 @@ export default function Search({setView}) {
       </section>
       
       <div>
-          {searchData === null 
-          // ? <FeaturedPlaylists
-          ? null
-          : <SearchResults
-              playlists={searchData?.body.playlists.items}
-              songs={searchData?.body.tracks.items}
-              artists={searchData?.body.artists.items}
-              setView={setView}
-              
+          {searchData && <SearchResults
+            playlists={searchData?.body.playlists.items.filter((playlist) => playlist)}
+            songs={searchData?.body.tracks.items.filter((track) => track)}
+            artists={searchData?.body.artists.items.filter((artist) => artist)}
+            setView={setView}
           />}
       </div>
     </>

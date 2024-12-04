@@ -20,7 +20,7 @@ const LOGIN_URL = `https://accounts.spotify.com/authorize?${new URLSearchParams(
 
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
-  clientSecret: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
 });
 
 export default spotifyApi;
