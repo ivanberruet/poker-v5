@@ -13,7 +13,7 @@ const refreshAccessToken = async (token) => {
     return {
       ...token,
       accessToken: refreshedToken.access_token,
-      accessTokenExpires: Date.now() + refreshedToken.expires_in * 1000,
+      accessTokenExpires: Date.now() + refreshedToken.expires_in * 10000,
       refreshToken: refreshedToken.refresh_token ?? token.refreshToken,
     }
   } catch (error) {
@@ -46,7 +46,7 @@ const authOptions = {
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
-        token.accessTokenExpires = account.expires_at * 1000;
+        token.accessTokenExpires = account.expires_at * 10000;
         return token;
       }
       // return previous token if the access token has not expired
