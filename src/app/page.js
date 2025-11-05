@@ -5,7 +5,6 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import Game from "@/components/game/Game";
 import Info from "@/components/info/Info";
 import Stats from "@/components/stats/Stats";
-import Music from "@/components/music/Music";
 import Settings from "@/components/setings/Settings";
 import Header from "@/components/header/Header";
 import Loading from "./Loading";
@@ -132,7 +131,6 @@ export default function Home() {
           <Header />
           <Game view={view} />
           {centerComponent}
-          <Music view={view} />
           <Toaster />
         </div> 
       </main>

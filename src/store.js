@@ -7,10 +7,6 @@ import timeSlice from './reducers/timeSlice';
 import structureSlice from './reducers/structureSlice';
 import gameSlice from './reducers/gameSlice';
 import clockSlice from './reducers/clockSlice';
-import playlistSlice from './reducers/playlistSlice';
-import albumSlice from './reducers/albumSlice';
-import artistSlice from './reducers/artistSlice';
-import currentSongSlice from './reducers/currentSongSlice';
 import historySlice from './reducers/historySlice';
 
 export const store = configureStore({
@@ -23,10 +19,6 @@ export const store = configureStore({
     structure: structureSlice,
     game: gameSlice,
     clock: clockSlice,
-    playlist: playlistSlice,
-    album: albumSlice,
-    artist: artistSlice,
-    currentSong: currentSongSlice,
     history: historySlice,
   },
 });

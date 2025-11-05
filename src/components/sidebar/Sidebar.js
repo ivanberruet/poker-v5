@@ -1,7 +1,7 @@
 'use client'
 import * as React from "react"
 import Image from "next/image";
-import { CircleUserIcon, Home, Info, LineChart, Music, PanelLeft, Settings } from "lucide-react";
+import { CircleUserIcon, Home, Info, LineChart, PanelLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui//button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui//sheet";
 import DesktopLink from "./DesktopLink";
@@ -9,32 +9,8 @@ import MobileLink from "./MobileLink";
 import { signOut } from "next-auth/react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import useSpotify from "@/hooks/useSpotify";
 
 export default function Sidebar({ view, setView }) {
-  const spotifyApi = useSpotify();
-  const handleToken = () => {
-    const f = async () => {
-      // spotifyApi.getRefreshToken()
-      // console.log("...",spotifyApi.getRefreshToken());
-      
-      // spotifyApi.resetAccessToken()
-
-      spotifyApi.resetAccessToken()
-      spotifyApi.setAccessToken(spotifyApi.getRefreshToken());
-      
-      
-      //const refreshToken = spotifyApi.getRefreshToken();
-      
-      // if (!refreshToken) {
-      //   const { body: refreshedToken } = await spotifyApi.refreshAccessToken();
-      //   spotifyApi.setAccessToken(refreshedToken.access_token);
-      //   spotifyApi.setRefreshToken(refreshedToken.refresh_token);
-        
-      // }
-    }
-    f();
-  }
 
   return (
     <div className="Sidebar_container | w-full sm:w-fit flex flex-col bg-muted/40 text-accent-foreground">
@@ -49,8 +25,6 @@ export default function Sidebar({ view, setView }) {
           <DesktopLink icon={<Info className="h-5 w-5" />} text="Información" className={view === "info" ? "bg-accent text-foreground " : "text-muted-foreground"} setView={setView} value="info" />
 
           <DesktopLink icon={<LineChart className="h-5 w-5" />} text="Estadísticas" className={view === "stats" ? "bg-accent text-foreground " : "text-muted-foreground"} setView={setView} value="stats" />
-
-          <DesktopLink icon={<Music className="h-5 w-5" />} text="Música" className={view === "music" ? "bg-accent text-foreground " : "text-muted-foreground"} setView={setView} value="music" />
 
           <DesktopLink icon={<Settings className="h-5 w-5" />} text="Configuración" className={view === "settings" ? "bg-accent text-foreground " : "text-muted-foreground"} setView={setView} value="settings" />
 
@@ -89,8 +63,6 @@ export default function Sidebar({ view, setView }) {
                 <MobileLink icon={<Info className="h-5 w-5" />} text="Información" className={view === "info" ? "text-foreground " : "text-muted-foreground"} setView={setView} value="info" />
 
                 <MobileLink icon={<LineChart className="h-5 w-5" />} text="Estadísticas" className={view === "stats" ? "text-foreground " : "text-muted-foreground"} setView={setView} value="stats" />
-
-                <MobileLink icon={<Music className="h-5 w-5" />} text="Música" className={view === "music" ? "text-foreground " : "text-muted-foreground"} setView={setView} value="music" />
 
                 <MobileLink icon={<Settings className="h-5 w-5" />} text="Configuración" className={view === "settings" ? "text-foreground " : "text-muted-foreground"} setView={setView} value="settings" />
 
