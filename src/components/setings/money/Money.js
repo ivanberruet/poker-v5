@@ -6,7 +6,7 @@ import { setEntry, setReentry, setWinners } from '@/reducers/moneySlice';
 
 export default function Money() {
   const dispatch = useDispatch();
-  const optionValues = [5,6,7,8,9,10,11,12,13,14,15]
+  const optionValues = [10,11,12,13,14,15, 16,17,18,19,20,25]
   const {entry, reentry, winners} = useSelector((state) => state?.money)
 
 

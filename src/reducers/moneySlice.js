@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const moneySlice = createSlice({
   name: 'money',
   initialState: {
-    entry: 5000,
-    reentry: 5000,
+    entry: 10000,
+    reentry: 10000,
     pool: 0,
     winners: 2,
     prizes: [[100], [70, 30], [65, 25, 10]]
